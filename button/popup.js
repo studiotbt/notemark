@@ -23,8 +23,7 @@ var Sites = {
         }
     },
     init: function() {
-        var self = this;
-        chrome.storage.local.get(null, function(storage) {
+        chrome.storage.local.get(null, (storage) => {
             var sites = storage.sites;
             var openInNewTab = storage && storage.settings && storage.settings.openInNewTab;
 
@@ -35,65 +34,62 @@ var Sites = {
 
             // Add existing notes to deck
             for (var site in sites) {
-                self._items++;
+                this._items++;
                 var details = sites[site];
-                self._createSiteUI(details.title, details.faviconUrl, details.url);
+                this._createSiteUI(details.title, details.faviconUrl, details.url);
             }
 
             // Initialize click handlers
-            self.initClickHandlers();
+            this.initClickHandlers();
 
             // Update icon
-            self.updateIconState();
+            this.updateIconState();
 
             // Update number of saved notes
-            self.updateFooterText();
+            this.updateFooterText();
 
             // Update "Open in new tab" checkbox
-            self.updateCheckBox();
+            this.updateCheckBox();
         });
     },
     initClickHandlers: function() {
-        var self = this;
         // "Heart" button click event
-        $("#addbtn").unbind().click(function() {
+        $("#addbtn").unbind().click(() => {
             // Get info about current tab
-            self.getCurrentTabInfo(function(info) {
+            this.getCurrentTabInfo((info) => {
                 var tab = info[0];
                 // Add or remove a note?
                 if ($("#addbtn").hasClass("heart-red")) {
-                    var elem = self.getElement(tab.url);
-                    self.removeSite(tab.url, elem);
+                    var elem = this.getElement(tab.url);
+                    this.removeSite(tab.url, elem);
                 } else {
-                    self.addSite(tab);
+                    this.addSite(tab);
                 }
             });
         });
 
         // Settings icon click event
-        $(".settingsicon").unbind().click(function() {
+        $(".settingsicon").unbind().click(() => {
             $(".settings").slideToggle({ duration: 250, easing: "easeOutExpo"});
         });
 
         // "Open in new tab" checkbox
-        $("#checkboxoption").unbind().click(function() {
+        $("#checkboxoption").unbind().click(() => {
             var checked = $(".checkboxicon").hasClass("enabled");
-            chrome.storage.local.set({ settings: { openInNewTab: !checked } }, function() {
-                self.updateCheckBox();
-            });
+            chrome.storage.local.set({ settings: { openInNewTab: !checked } }, () => this.updateCheckBox());
         });
 
         // Add current tabs to notes
-        $("#addnotesoption").unbind().click(function() {
-            chrome.tabs.query({ currentWindow: true }, function(tabs) {
+        $("#addnotesoption").unbind().click(() => {
+            chrome.tabs.query({ currentWindow: true }, (tabs) => {
                 for (var tab of tabs) {
-                    self.addSite(tab);
+                    this.addSite(tab);
                 }
             });
         });
 
         // Open all notes
-        $("#opennotesoption").unbind().click(function() {
+        $("#opennotesoption").unbind().click(() => {
             var sites = $(".sitetitle");
             if (!sites) {
                 return;
@@ -110,7 +106,7 @@ var Sites = {
         });
 
         // Site title click event
-        $(".sitetitle").unbind().click(function(event) {
+        $(".sitetitle").unbind().click((event) => {
             var url = event.target.dataset.href;
             var checked = $(".checkboxicon").hasClass("enabled");
             if (checked) {
@@ -121,25 +117,24 @@ var Sites = {
         });
 
         // Remove button click event
-        $(".removebtn").unbind().click(function(event) {
+        $(".removebtn").unbind().click((event) => {
           var elem = event.currentTarget.parentElement.parentElement;
           var url = event.currentTarget.parentElement.nextSibling.dataset.href;
-          self.removeSite(url, elem);
+          this.removeSite(url, elem);
         });
     },
     addSite: function(tab) {
-        var self = this;
-        this.checkSite(tab.url, function(allowed) {
+        this.checkSite(tab.url, (allowed) => {
             if (!allowed) {
                 return;
             }
-            self._items++;
+            this._items++;
             // Get a favicon properly
             if (!tab.favIconUrl || tab.favIconUrl.indexOf("chrome://theme") > -1) {
                 tab.favIconUrl = chrome.runtime.getURL("../img/favicon.png");
             }
-            self._createSiteUI(tab.title, tab.favIconUrl, tab.url, true);
-            chrome.storage.local.get("sites", function(storage) {
+            this._createSiteUI(tab.title, tab.favIconUrl, tab.url, true);
+            chrome.storage.local.get("sites", (storage) => {
                 var storage = storage["sites"];
                 var site = { title: tab.title, faviconUrl: tab.favIconUrl, url: tab.url };
                 if (!storage) {
@@ -150,9 +145,9 @@ var Sites = {
                     storage.push(site);
                     chrome.storage.local.set({sites: storage});
                 }
-                self.initClickHandlers();
-                self.updateIconState();
-                self.updateFooterText();
+                this.initClickHandlers();
+                this.updateIconState();
+                this.updateFooterText();
 
                 // Scroll to the top to see latest note
                 $(".deck").animate({ scrollTop: 0 }, { duration: 150, easing: "easeOutExpo"});
@@ -181,39 +176,38 @@ var Sites = {
         callback(allowed);
     },
     removeSite: function(url, elem) {
-        var self = this;
-        chrome.storage.local.get("sites", function(storage) {
+        chrome.storage.local.get("sites", (storage) => {
             var sites = storage["sites"];
             for (var i=0; i<sites.length; i++) {
                 if (sites[i].url === url) {
                     sites.splice(i, 1);
-                    self._items--;
+                    this._items--;
                     break;
                 }
             }
-            chrome.storage.local.set({sites: sites}, function() {
+            chrome.storage.local.set({sites: sites}, () => {
                 // Begin removal animation
                 $(elem).addClass("removenote");
 
                 // When removal animation ends, add top up animation
                 // TODO: Don't use setTimeout, switch to jQuery/CSS animations
-                setTimeout(function() {
+                setTimeout(() => {
                     $(elem).addClass("removenote2");
                     var id = $(elem).data().id;
                     $("[data-id='" + id + "'] > .sitetitle").css("margin", "0px");
                 }, 400);
 
                 // Remove a note after end of both animations
-                setTimeout(function() {
+                setTimeout(() => {
                    $(elem).remove();
-                   self.updateFooterText();
-                   self.updateIconState();
+                   this.updateFooterText();
+                   this.updateIconState();
                 }, 600);
             });
         });
     },
     getCurrentTabInfo: function(callback) {
-        chrome.tabs.query({active: true}, function(info) {
+        chrome.tabs.query({active: true}, (info) => {
             callback(info);
         });
     },
@@ -221,7 +215,7 @@ var Sites = {
         return $("[data-href='" + url + "']").parent();
     },
     updateCheckBox: function() {
-        chrome.storage.local.get("settings", function(data) {
+        chrome.storage.local.get("settings", (data) => {
             var openInNewTab = data.settings.openInNewTab;
             if (openInNewTab) {
                 $(".checkboxicon").css("background-position", "0px -23px").addClass("enabled").removeClass("disabled");
@@ -231,23 +225,20 @@ var Sites = {
         });
     },
     updateIconState: function() {
-        var self = this;
-        self.getCurrentTabInfo(function(info) {
+        this.getCurrentTabInfo((info) => {
             var tab = info[0];
             var url = tab.url;
-            self.checkSite(url, function(allowed) {
+            this.checkSite(url, (allowed) => {
                 // If site has already been added
                 if (!allowed) {
-                    $("#addbtn").addClass("heart-red");
-                    $("#addbtn").mouseleave(function() {
-                        $(this).addClass("heart-red");
-                    });
+                    $("#addbtn").
+                    addClass("heart-red").
+                    mouseleave(() => $(this).addClass("heart-red"));
                 // If site hasn't been added yet
                 } else {
-                    $("#addbtn").removeClass("heart-red");
-                    $("#addbtn").mouseleave(function() {
-                        $(this).removeClass("heart-red");
-                    });
+                    $("#addbtn").
+                    removeClass("heart-red").
+                    mouseleave(() => $(this).removeClass("heart-red"));
                 }
             });
         });
