@@ -14,8 +14,11 @@ let Sites = {
                     "<div class='removebtn'>" + "</div>" +
                 "</div>" +
                 "<div class='sitetitle' data-href='" + url + "' title='" + title + "'>" + title + "</div>" +
+                "<div class='editiconcontainer'>" +
+                    "<div class='editicon'></div>" +
+                "</div>" +
                 "<div class='siteoptions'>" +
-                    "<div class='siteoptionleft'></div>" +
+                    "<div class='siteoptionleft'>Rename</div>" +
                     "<div class='siteoptionright'></div>" +
                 "</div>" +
             "</div>"
@@ -213,6 +216,32 @@ let Sites = {
                     window.close();
                 });
             }
+        });
+
+        // Show setting icon on site hover
+        $(".site").hover(function(event) {
+            let self = $(this);
+            let elem = event.currentTarget.children[2];
+            if (event.type === "mouseenter") {
+                $(elem).css("background-color", "#fafafa");
+                $(elem).fadeIn("fast");
+            } else {
+                $(elem).css("background-color", "whitesmoke");
+                $(elem).fadeOut("fast");
+            }
+            $(elem).unbind().click(function() {
+                let el = $(".siteoptions", self);
+                if (el.is(":visible")) {
+                    el.animate({ height: 0 }, { duration: 250, easing: "easeOutExpo"});
+                    setTimeout(function() {
+                        el.hide();
+                    }, 250);
+                } else {
+                    el.show().animate({ height: 25 }, { duration: 250, easing: "easeOutExpo"});
+                }
+                //$(".siteoptions", self).show();
+            });
+            console.log(event);
         });
 
         // Remove button click event

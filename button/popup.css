@@ -61,8 +61,6 @@ http://matthewlein.com/ceaser/
 }
 
 .site { /* each note area */
-    height: 40px;
-    padding: 2px 0 2px 0;
     border-top: 1px solid #e3e3e3;
     border-bottom: 1px solid #e3e3e3;
     position: relative;
@@ -280,16 +278,55 @@ http://matthewlein.com/ceaser/
 }
 
 .sitetitle {
-    margin-top: 3px;
     display: block;
-    left: -10px;
-    position: inherit;
-    padding: 10px 0 0 15px;
     text-align: left;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
     -webkit-transition: all .1s ease-in;
     cursor: pointer;
+    line-height: 45px;
     /* background: green; for referencing click area  */
+}
+
+.editiconcontainer {
+    position: absolute;
+    width: 0px;
+    z-index: 2;
+    top: 12px;
+    right: 0px;
+    background-color: #fafafa;
+    padding-left: 5px;
+    width: 35px;
+    display: none;
+}
+
+.editicon {
+    z-index: 3;
+    width: 20px;
+    content: url(../img/settings.svg);
+    cursor: pointer;
+}
+
+.siteoptions {
+    display: none;
+    width: 100%;
+    height: 0;
+}
+
+.siteoptionleft {
+    width: 124px;
+    float: left;
+    height: 100%;
+    text-align: center;
+    line-height: 25px;
+    border-right: 1px solid #e3e3e3;
+}
+
+.siteoptionright {
+    width: 50%;
+    float: right;
+    height: 100%;
+    text-align: center;
+    line-height: 25px;
 }
