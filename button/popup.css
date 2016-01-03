@@ -239,17 +239,17 @@ http://matthewlein.com/ceaser/
 .favicon {
     z-index: 2;
     width: 20px;
-    margin: 10px;
+    margin-top: 12px;
+    margin-left: 10px;
 }
 
 .removebtn {
     /* favicon rollover to remove item */
     width: 30px;
-    margin-top: -38px;
+    top: 7px;
     left: 5px;
-    position: relative;
+    position: absolute;
     content: url(../img/remove.svg);
-    -webkit-transition-duration: 0.05s;
     opacity: 0;
     z-index: 3;
     background-color: whitesmoke;
@@ -297,7 +297,7 @@ http://matthewlein.com/ceaser/
     right: 0px;
     background-color: #fafafa;
     padding-left: 5px;
-    width: 35px;
+    width: 30px;
     display: none;
 }
 
@@ -321,6 +321,7 @@ http://matthewlein.com/ceaser/
     text-align: center;
     line-height: 25px;
     border-right: 1px solid #e3e3e3;
+    cursor: pointer;
 }
 
 .siteoptionright {
